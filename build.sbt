@@ -5,10 +5,11 @@ scalaVersion := "2.12.8"
 
 val akkaHttpVersion = "10.1.8"
 val circeVersion = "0.11.0"
+val alpakkaVersion = "1.1.2"
 
 libraryDependencies ++= Seq(
-  "com.lightbend.akka"           %% "akka-stream-alpakka-unix-domain-socket" % "1.1.2",
-  "com.lightbend.akka"           %% "akka-stream-alpakka-influxdb"           % "1.1.2",
+  "com.lightbend.akka"           %% "akka-stream-alpakka-unix-domain-socket" % alpakkaVersion,
+  "com.lightbend.akka"           %% "akka-stream-alpakka-influxdb"           % alpakkaVersion,
   "com.github.pureconfig"        %% "pureconfig"                             % "0.12.2",
   "com.typesafe.akka"            %% "akka-http"                              % akkaHttpVersion exclude ("com.typesafe", "config"),
   "ch.qos.logback"               % "logback-classic"                         % "1.2.3",

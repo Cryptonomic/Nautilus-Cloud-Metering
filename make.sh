@@ -39,10 +39,14 @@ function compile {
     cd "$NGINX_BUILD_DIR"
     ./configure --with-compat --add-dynamic-module="$BASEDIR/src/main/c/"  --with-ld-opt="-ljansson" --with-debug
     make modules -ljansson
+    local cstatus=$?
+    if [[ $cstatus -ne 0 ]]; then
+        echo "Error compiling module source"
+        exit 1
+    fi
     cp objs/metered_access_module.so "$BUILD_DIR"
     cd "$BASEDIR"
     sbt 'set test in assembly := {}' assembly
-    #sbt assembly
 }
 
 function install {

@@ -71,16 +71,16 @@ class ApiKeyAuthProvider(cfg: NautilusCloudConfig)(implicit val system: ActorSys
   def shutdown(): Unit =
     if (!cancellable.isCancelled) cancellable.cancel()
 
-  override def authorize(request: streaming.HttpRequest): Response = {
-    val header = request.headers.find(_.name.contains("apiKey")).map(_.value)
-    if (header.isEmpty)
-      Response(Action.DENY, Some(request), Some("ApiKey header missing"))
-    else {
-      logger.debug(s"Client Key : ${header.get}, Key Set: ${keySet.asScala.mkString(",")}")
-      if (keySet.contains(header.get))
-        Response(Action.ALLOW, Some(request), None)
-      else
-        Response(Action.DENY, Some(request), Some("Invalid Key"))
+  override def authorize(request: streaming.HttpRequest): Response =
+    request.headers.find(_.name.contains("apiKey")).map(_.value) match {
+      case Some(header) =>
+        logger.debug(s"Client Key : $header, Key Set: ${keySet.asScala.mkString(",")}")
+        if (keySet.contains(header))
+          Response(Action.ALLOW, Some(request), None)
+        else
+          Response(Action.DENY, Some(request), Some("Invalid Key"))
+      case None =>
+        Response(Action.DENY, Some(request), Some("ApiKey header missing"))
     }
-  }
+
 }
