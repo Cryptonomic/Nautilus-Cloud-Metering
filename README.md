@@ -121,18 +121,18 @@ in most distributions.
 
 1. JRE 8 should be installed to run the agent itself.
 
-Steps to deploy:
+Steps to deploy, build artifacts are available in the `target/` directory:
 
 1. Copy the compiled module `metered_access_module.so` to `/etc/nginx/modules/`.
 1. Configure nginx as written above.
 1. Copy the agent jar file to the same host.
-1. Start the agent via `java -jar metering-agent-0.1.jar`
+1. Start the agent via `java -jar metering-agent-x.y.jar`
 
 ## Docker based Load Testing
 
 A docker file `loadtest.yml` is provided to perform a local load test. This is useful for
 testing latency of the layer in the absence of external factors, though it can form the basis of a
-containerized deployment. We use Artillery to simulate clients.
+containerized deployment. We use [Artillery](https://artillery.io/) to simulate clients.
 
 Note that changing the nginx version in `make.sh` will necessitate an update to the nginx version of the container. See
 `docker/loadtest/Dockerfile`.
