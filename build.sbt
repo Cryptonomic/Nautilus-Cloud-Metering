@@ -6,10 +6,15 @@ scalaVersion := "2.12.10"
 val akkaHttpVersion = "10.1.8"
 val circeVersion = "0.11.0"
 val alpakkaVersion = "1.1.2"
+val chroniclerVersion = "0.6.4"
 
 libraryDependencies ++= Seq(
   "com.lightbend.akka"           %% "akka-stream-alpakka-unix-domain-socket" % alpakkaVersion,
   "com.lightbend.akka"           %% "akka-stream-alpakka-influxdb"           % alpakkaVersion,
+  "com.github.fsanaulla"         %% "chronicler-core-shared"                 % chroniclerVersion,
+  "com.github.fsanaulla"         %% "chronicler-akka-io"                     % chroniclerVersion,
+  "com.github.fsanaulla"         %% "chronicler-akka-management"             % chroniclerVersion,
+  "com.github.fsanaulla"         %% "chronicler-macros"                      % chroniclerVersion,
   "com.github.pureconfig"        %% "pureconfig"                             % "0.12.2",
   "com.typesafe.akka"            %% "akka-http"                              % akkaHttpVersion exclude ("com.typesafe", "config"),
   "ch.qos.logback"               % "logback-classic"                         % "1.2.3",

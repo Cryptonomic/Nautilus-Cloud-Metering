@@ -2,6 +2,8 @@ package tech.cryptonomic.nautilus.metering
 
 import pureconfig._
 import akka.actor.ActorSystem
+import akka.http.scaladsl.Http
+import akka.http.scaladsl.server.Route
 import akka.stream.ActorMaterializer
 import akka.stream.alpakka.unixdomainsocket.scaladsl.UnixDomainSocket
 import com.typesafe.scalalogging.LazyLogging
@@ -9,6 +11,8 @@ import pureconfig.loadConfig
 import pureconfig.generic.auto.exportReader
 import tech.cryptonomic.nautilus.metering.auth.ApiKeyAuthProvider
 import tech.cryptonomic.nautilus.metering.config.{InfluxDbConfig, MeteringAgentConfig, NautilusCloudConfig}
+import tech.cryptonomic.nautilus.metering.repositories.InfluxDbRepoImpl
+import tech.cryptonomic.nautilus.metering.routes.Routes
 import tech.cryptonomic.nautilus.metering.streaming.{DecisionRecordStream, IpcFlow}
 
 import scala.concurrent.{Await, ExecutionContextExecutor, Future}
@@ -62,6 +66,8 @@ class MeteringAgent(cfgSrc: ConfigObjectSource = ConfigSource.default)(implicit 
   def start(): Unit =
     Try(Await.result(run(), 10 seconds)) match {
       case Success(_) =>
+        val repo = new InfluxDbRepoImpl(dbConfig.get)
+        new Routes(repo)
         logger.info(s"Agent started on socket `${agentConfig.socketPath}`")
       case Failure(ex) =>
         logger.error("Error initializing agent.", ex)
