@@ -14,6 +14,6 @@ docker build \
 -t $IMAGE_NAME:base-tmp \
 github.com/hseeberger/scala-sbt.git#:debian
 
-docker build -f dockerfile-base -t $DOCKER_REPO/$IMAGE_NAME:$IMAGE_VERSION .
-docker tag $DOCKER_REPO/$IMAGE_NAME:$IMAGE_VERSION $IMAGE_NAME:$IMAGE_VERSION
+docker build -f docker/base/dockerfile-base -t $IMAGE_NAME:$IMAGE_VERSION .
+#docker tag $IMAGE_NAME:$IMAGE_VERSION $DOCKER_REPO/$IMAGE_NAME:$IMAGE_VERSION
 #docker push $DOCKER_REPO/$IMAGE_NAME:$IMAGE_VERSION

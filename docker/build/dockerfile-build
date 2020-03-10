@@ -1,4 +1,4 @@
-FROM nautilus-cloud-metering:base-2020.03.06
+FROM nautilus-cloud-metering:base-latest
 
 ADD . /build
 WORKDIR /build
