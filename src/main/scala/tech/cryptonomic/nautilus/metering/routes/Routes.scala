@@ -15,50 +15,42 @@ class Routes(influxDbRepo: InfluxDbRepo)(implicit system: ActorSystem, materiali
   import akka.http.scaladsl.server.Directives._
 
   val route: Route = get {
-    concat(
-      pathPrefix("queries") {
-        concat(
-          path("5m") {
-            parameters('apiKey.*) { keys =>
+    parameters('apiKey.*) { keys =>
+      concat(
+        pathPrefix("queries") {
+          concat(
+            path("5m") {
               complete(influxDbRepo.get5minQueries(keys.toList))
-            }
-          },
-          path("24h") {
-            parameters('apiKey.*) { keys =>
+            },
+            path("24h") {
               complete(influxDbRepo.get24hQueries(keys.toList))
             }
-          }
-        )
-      },
-      pathPrefix("routes") {
-        concat(
-          path("5m") {
-            parameters('apiKey.*) { keys =>
+          )
+        },
+        pathPrefix("routes") {
+          concat(
+            path("5m") {
               complete(influxDbRepo.get5minRoute(keys.toList))
+            },
+            path("24h") {
+              parameters('apiKey.*) { keys =>
+                complete(influxDbRepo.get24hRoute(keys.toList))
+              }
             }
-          },
-          path("24h") {
-            parameters('apiKey.*) { keys =>
-              complete(influxDbRepo.get24hRoute(keys.toList))
-            }
-          }
-        )
-      },
-      pathPrefix("ips") {
-        concat(
-          path("5m") {
-            parameters('apiKey.*) { keys =>
+          )
+        },
+        pathPrefix("ips") {
+          concat(
+            path("5m") {
               complete(influxDbRepo.get5minIp(keys.toList))
-            }
-          },
-          path("24h") {
-            parameters('apiKey.*) { keys =>
+            },
+            path("24h") {
               complete(influxDbRepo.get24hIp(keys.toList))
             }
-          }
-        )
-      }
-    )
+          )
+        }
+      )
+    }
   }
 
 }
