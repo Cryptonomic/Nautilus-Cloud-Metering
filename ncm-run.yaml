@@ -14,7 +14,7 @@ services:
     volumes:
       - dbdata:/var/lib/influxdb
     networks:
-      - loadtest
+      - ncm-net
   agent:
     image: ncm-agent:latest
     depends_on:
@@ -22,7 +22,7 @@ services:
     volumes:
       - socket:/tmp
     networks:
-      - loadtest
+      - ncm-net
   nginx:
     image: ncm-nginx:latest
     depends_on:
@@ -33,12 +33,11 @@ services:
       - socket:/tmp
       - ./docker/loadtest/nginx.conf:/etc/nginx/nginx.conf:ro
     networks:
-      - loadtest
+      - ncm-net
 
 networks:
-  loadtest:
+  ncm-net:
 
 volumes:
   dbdata:
-  locust:
   socket:
