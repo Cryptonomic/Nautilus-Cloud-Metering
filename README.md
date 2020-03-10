@@ -98,7 +98,7 @@ The requirements for the build process are:
 
 1. The base development package for your distro should be installed. For example, in Arch Linux this would be
 `base-devel` and in ubuntu it would be `build-essential`.
-1. `libjansson-dev` should be installed. Check your distro's package manager for the
+1. `libpcre++-dev zlib1g-dev libjansson-dev` should be installed. Check your distro's package manager for the
 exact package name.
 1. `sbt` should be installed. This project currently uses version 1.3.4.
 

@@ -1,0 +1,3 @@
+FROM nginx:1.17.8
+RUN apt update && apt install -y libjansson4 && apt clean
+COPY --from=ncm-build:latest /build/target/metered_access_module.so /etc/nginx/modules/metered_access_module.so
