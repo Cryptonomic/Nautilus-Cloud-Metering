@@ -7,7 +7,7 @@ BEGIN
   SELECT count(countable)
   INTO "a_day"."five_minute_queries_measurement"
   FROM decisions
-  GROUP BY time(5m)
+  GROUP BY apiKey, time(5m)
 END
 
 CREATE CONTINUOUS QUERY "cq_daily_queries" ON "ncmetering"
@@ -15,7 +15,7 @@ BEGIN
   SELECT count(countable)
   INTO "a_month"."daily_queries_measurement"
   FROM decisions
-  GROUP BY time(24h)
+  GROUP BY apiKey, time(24h)
 END
 
 CREATE CONTINUOUS QUERY "cq_five_minute_top_routes" ON "ncmetering"
@@ -23,7 +23,7 @@ BEGIN
   SELECT count(countable)
   INTO "a_day"."five_minute_top_routes_measurement"
   FROM decisions
-  GROUP BY uri, time(5m)
+  GROUP BY apiKey, uri, time(5m)
 END
 
 CREATE CONTINUOUS QUERY "cq_daily_top_routes" ON "ncmetering"
@@ -31,7 +31,7 @@ BEGIN
   SELECT count(countable)
   INTO "a_month"."daily_top_routes_measurement"
   FROM decisions
-  GROUP BY uri, time(24h)
+  GROUP BY apiKey, uri, time(24h)
 END
 
 CREATE CONTINUOUS QUERY "cq_five_minute_top_ips" ON "ncmetering"
@@ -39,7 +39,7 @@ BEGIN
   SELECT count(countable)
   INTO "a_day"."five_minute_top_ips_measurement"
   FROM decisions
-  GROUP BY ip, time(5m)
+  GROUP BY apiKey, ip, time(5m)
 END
 
 CREATE CONTINUOUS QUERY "cq_daily_top_ips" ON "ncmetering"
@@ -47,5 +47,5 @@ BEGIN
   SELECT count(countable)
   INTO "a_month"."daily_top_ips_measurement"
   FROM decisions
-  GROUP BY ip, time(24h)
+  GROUP BY apiKey, ip, time(24h)
 END

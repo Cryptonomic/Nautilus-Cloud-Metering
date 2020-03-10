@@ -1,6 +1,5 @@
 package tech.cryptonomic.nautilus.metering.routes
 import akka.actor.ActorSystem
-import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Route
 import akka.stream.Materializer
 import com.typesafe.scalalogging.LazyLogging
@@ -8,7 +7,6 @@ import de.heikoseeberger.akkahttpcirce.ErrorAccumulatingCirceSupport
 import tech.cryptonomic.nautilus.metering.repositories.InfluxDbRepo
 
 import scala.concurrent.ExecutionContext
-import scala.util.{Failure, Success}
 
 class Routes(influxDbRepo: InfluxDbRepo)(implicit system: ActorSystem, materializer: Materializer, ec: ExecutionContext)
     extends ErrorAccumulatingCirceSupport
@@ -21,38 +19,46 @@ class Routes(influxDbRepo: InfluxDbRepo)(implicit system: ActorSystem, materiali
       pathPrefix("queries") {
         concat(
           path("5m") {
-            complete(influxDbRepo.get5minQueries)
+            parameters('apiKey.*) { keys =>
+              complete(influxDbRepo.get5minQueries(keys.toList))
+            }
           },
           path("24h") {
-            complete(influxDbRepo.get24hQueries)
+            parameters('apiKey.*) { keys =>
+              complete(influxDbRepo.get24hQueries(keys.toList))
+            }
           }
         )
       },
       pathPrefix("routes") {
         concat(
           path("5m") {
-            complete(influxDbRepo.get5minRoute)
+            parameters('apiKey.*) { keys =>
+              complete(influxDbRepo.get5minRoute(keys.toList))
+            }
           },
           path("24h") {
-            complete(influxDbRepo.get24hRoute)
+            parameters('apiKey.*) { keys =>
+              complete(influxDbRepo.get24hRoute(keys.toList))
+            }
           }
         )
       },
       pathPrefix("ips") {
         concat(
           path("5m") {
-            complete(influxDbRepo.get5minIp)
+            parameters('apiKey.*) { keys =>
+              complete(influxDbRepo.get5minIp(keys.toList))
+            }
           },
           path("24h") {
-            complete(influxDbRepo.get24hIp)
+            parameters('apiKey.*) { keys =>
+              complete(influxDbRepo.get24hIp(keys.toList))
+            }
           }
         )
       }
     )
-  }
-  Http().bindAndHandle(route, "localhost", 8080).andThen {
-    case Success(binding) => logger.info("Server successfully started at {}", binding.localAddress)
-    case Failure(exception) => logger.error("Could not start HTTP server", exception)
   }
 
 }
