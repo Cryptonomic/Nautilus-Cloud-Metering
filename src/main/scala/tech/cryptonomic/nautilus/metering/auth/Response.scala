@@ -3,7 +3,6 @@ package tech.cryptonomic.nautilus.metering.auth
 import tech.cryptonomic.nautilus.metering.auth.Action.Action
 import tech.cryptonomic.nautilus.metering.streaming.HttpRequest
 
-
 /**
   * The response from the authorization provider
   *

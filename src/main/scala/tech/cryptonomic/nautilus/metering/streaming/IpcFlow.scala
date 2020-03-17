@@ -59,8 +59,10 @@ object IpcFlow extends LazyLogging {
     }.getOrElse(ipcFlow)
 
     ipcFlow.map { authResponse =>
-      logger.info(s"Auth response was : Ex => ${authResponse.ex} Action => ${authResponse.action} " +
-        s"on Request => ${authResponse.request}")
+      logger.info(
+        s"Auth response was : Ex => ${authResponse.ex} Action => ${authResponse.action} " +
+            s"on Request => ${authResponse.request}"
+      )
       ByteString(authResponse.action.toString)
     }
   }
