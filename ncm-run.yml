@@ -1,0 +1,43 @@
+version: "3.3"
+services:
+  influx:
+    image: influxdb:1.7.9
+    environment:
+      INFLUXDB_DB:  "ncmetering"
+      INFLUXDB_ADMIN_ENABLED: "true"
+      INFLUXDB_ADMIN_USER: "admin"
+      INFLUXDB_ADMIN_PASSWORD: "supersecretpassword"
+      INFLUXDB_USER: "agent"
+      INFLUXDB_USER_PASSWORD: "smith"
+    ports:
+      - 8086:8086
+    volumes:
+      - dbdata:/var/lib/influxdb
+    networks:
+      - ncm-net
+  agent:
+    image: ncm-agent:latest
+    depends_on:
+      - influx
+    volumes:
+      - socket:/tmp
+    networks:
+      - ncm-net
+  nginx:
+    image: ncm-nginx:latest
+    depends_on:
+      - agent
+    ports:
+      - 9090:9090
+    volumes:
+      - socket:/tmp
+      - ./docker/loadtest/nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - ncm-net
+
+networks:
+  ncm-net:
+
+volumes:
+  dbdata:
+  socket:

@@ -98,7 +98,7 @@ The requirements for the build process are:
 
 1. The base development package for your distro should be installed. For example, in Arch Linux this would be
 `base-devel` and in ubuntu it would be `build-essential`.
-1. `libjansson-dev` should be installed. Check your distro's package manager for the
+1. `libpcre++-dev zlib1g-dev libjansson-dev` should be installed. Check your distro's package manager for the
 exact package name.
 1. `sbt` should be installed. This project currently uses version 1.3.4.
 
@@ -108,6 +108,16 @@ code.
 
 Before building the nginx version must be set in `make.sh` via the environment variable
 `NGINX_VERSION`. Once set, compile the project by running `make.sh` without any arguments.
+
+## Docker-based build
+
+For Docker base build follow these steps:
+1. Be in the root directory of the repo.
+1. Prepare the base image. This step needs to be executed only once. The idea for the base image is for speeding up the build process by having all dependencies and development packages already prepared. To build the base image run:
+`./docker/base/build-base-image.sh`
+1. Build agent jar and Nginx module. This is the actual building process. This step will build agent ant the module in an intermediate container and then create two separate containers for each component (`ncm-nginx` and `ncm-agent`). To do a build run:
+`./docker/build/build-images.sh`
+
 
 ## Deploy
 
@@ -127,6 +137,12 @@ Steps to deploy, build artifacts are available in the `target/` directory:
 1. Configure nginx as written above.
 1. Copy the agent jar file to the same host.
 1. Start the agent via `java -jar metering-agent-x.y.jar`
+
+## Docker-based deploy
+
+For Docker base deploy follow these steps:
+1. Be in the root directory of the repo.
+1. `docker-compose -f ncm-run.yml up`
 
 ## Docker based Load Testing
 
@@ -167,3 +183,11 @@ Summary report @ 20:11:29(+0530) 2020-02-23
     403: 1499
 ```
 
+## Docker-based Load Testing for Docker-based deploy
+
+1. Be in the root directory of the repo.
+1. Build the [Artillery](https://artillery.io/) image. This step needs to be executed only once. Run:
+`docker build -t artillery -f docker/artillery/dockerfile-artillery .` 
+1. Figure out your laptop IP address and put in `docker/loadtest/artillery.yml` instead of `localhost`.
+2. Run Artillery:
+`docker run -ti -v `pwd`/docker/loadtest:/work artillery artillery run artillery.yml`

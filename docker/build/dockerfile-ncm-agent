@@ -1,0 +1,6 @@
+FROM openjdk:8u242-slim-buster
+COPY --from=ncm-build:latest /build/target/scala-2.12/metering-agent-0.1.jar /app/
+WORKDIR /app
+RUN addgroup --gid 101 agent && adduser --home /app --no-create-home --uid 101 --gid 101 --system agent
+USER agent
+CMD ["java", "-jar", "metering-agent-0.1.jar"]
