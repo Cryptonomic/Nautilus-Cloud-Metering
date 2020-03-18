@@ -24,6 +24,7 @@ services:
       - 8086:8086
     volumes:
       - dbdata:/var/lib/influxdb
+      - ./iql/nautilus-cloud-metering.iql:/docker-entrypoint-initdb.d/01-initdb.iql
     networks:
       - loadtest
 
