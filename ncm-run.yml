@@ -24,6 +24,7 @@ services:
       - socket:/tmp
     networks:
       - ncm-net
+    command: java -cp metering-agent-0.1.jar tech.cryptonomic.nautilus.metering.MeteringAgent
   nginx:
     image: ncm-nginx:latest
     depends_on:
