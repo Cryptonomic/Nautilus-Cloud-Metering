@@ -13,6 +13,7 @@ services:
       - 8086:8086
     volumes:
       - dbdata:/var/lib/influxdb
+      - ./iql/nautilus-cloud-metering.iql:/docker-entrypoint-initdb.d/01-initdb.iql
     networks:
       - ncm-net
   agent:
@@ -23,6 +24,7 @@ services:
       - socket:/tmp
     networks:
       - ncm-net
+    command: java -cp metering-agent-0.1.jar tech.cryptonomic.nautilus.metering.MeteringAgent
   nginx:
     image: ncm-nginx:latest
     depends_on:
