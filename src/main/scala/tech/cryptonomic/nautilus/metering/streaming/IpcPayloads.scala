@@ -16,5 +16,13 @@ case class Header(name: String, value: String)
   * @param ip The IP from where the HTTP request originated from
   * @param headers A list of HTTP headers
   * @param servername The server name tag, useful for differentiating request from multiple modules
+  * @param method The HTTP method
   */
-case class HttpRequest(userAgent: String, uri: String, ip: String, headers: List[Header], servername: String)
+case class HttpRequest(
+    userAgent: String,
+    uri: String,
+    ip: String,
+    headers: List[Header],
+    servername: String,
+    method: String
+)
