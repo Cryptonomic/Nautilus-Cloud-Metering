@@ -150,6 +150,8 @@ static char *construct_access_check_request(ngx_http_request_t *r,
   else
     json_object_set_new(root, "userAgent", json_stringn((const char *) UNKNOWN,
       strlen(UNKNOWN)));
+  json_object_set_new(root, "method", json_stringn((const char *)r->method_name.data,
+                                            r->method_name.len));
   json_object_set_new(root, "servername",
       json_stringn((const char *) hlcf->servername.data, hlcf->servername.len));
   json_object_set_new(root, "uri", json_stringn((const char *)r->uri.data, r->uri.len));
