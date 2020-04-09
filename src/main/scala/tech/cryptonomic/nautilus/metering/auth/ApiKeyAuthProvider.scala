@@ -60,7 +60,9 @@ class ApiKeyAuthProvider(cfg: NautilusCloudConfig)(implicit val system: ActorSys
         }
 
         // Add in the static keys
+        logger.debug(s"Adding ${cfg.staticKeys.length} static keys..")
         keySet.addAll(cfg.staticKeys.asJava)
+        logger.info(s"KeySet contains ${keySet.size()} entries")
       }
     }
   )
