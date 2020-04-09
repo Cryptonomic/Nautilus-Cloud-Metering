@@ -53,16 +53,11 @@ class ApiKeyAuthProvider(cfg: NautilusCloudConfig)(implicit val system: ActorSys
             }
             .onComplete {
               case Success(_) =>
-                logger.info("Fetched API keys")
+                logger.info(s"Fetched ${keySet.size()} API keys.")
               case Failure(ex) =>
                 logger.error("Failed to fetch API keys", ex)
             }
         }
-
-        // Add in the static keys
-        logger.debug(s"Adding ${cfg.staticKeys.length} static keys..")
-        keySet.addAll(cfg.staticKeys.asJava)
-        logger.info(s"KeySet contains ${keySet.size()} entries")
       }
     }
   )
@@ -77,12 +72,14 @@ class ApiKeyAuthProvider(cfg: NautilusCloudConfig)(implicit val system: ActorSys
     if (request.method.toLowerCase.contentEquals("options")) {
       logger.debug("OPTIONS request, skipping auth")
       Response(Action.ALLOW, Some(request), None)
-    }
-    else {
+    } else {
       request.headers.find(_.name.contains("apiKey")).map(_.value) match {
-        case Some(header) =>
-          logger.debug(s"Client Key : $header, Key Set: ${keySet.asScala.mkString(",")}")
-          if (keySet.contains(header))
+        case Some(apiKey) =>
+          logger.debug(
+            s"Client Key : $apiKey - NC Keys: ${keySet.asScala.mkString(",")} - " +
+                s"Static Keys: ${cfg.staticKeys.mkString(",")}"
+          )
+          if (keySet.contains(apiKey) || cfg.staticKeys.contains(apiKey))
             Response(Action.ALLOW, Some(request), None)
           else
             Response(Action.DENY, Some(request), Some("Invalid Key"))
