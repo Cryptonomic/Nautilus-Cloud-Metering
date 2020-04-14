@@ -21,7 +21,7 @@ object MeteringApi extends App with LazyLogging {
   val repo = new InfluxDbRepoImpl(dbConfig)
   val routes = new Routes(repo).route
 
-  Http().bindAndHandle(routes, "localhost", 8080) andThen {
+  Http().bindAndHandle(routes, "0.0.0.0", 8080) andThen {
       case Success(binding) => logger.info("Server successfully started at {}", binding.localAddress)
       case Failure(exception) => logger.error("Could not start HTTP server", exception)
     }
