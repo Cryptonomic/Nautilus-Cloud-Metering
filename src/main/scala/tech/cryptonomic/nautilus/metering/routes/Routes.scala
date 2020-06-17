@@ -21,32 +21,30 @@ class Routes(influxDbRepo: InfluxDbRepo)(implicit system: ActorSystem, materiali
           pathPrefix("queries") {
             concat(
               path("5m") {
-                complete(influxDbRepo.get5minQueries(keys.toList, from))
+                complete(influxDbRepo.getFiveMinutesQueries(keys.toList, from))
               },
               path("24h") {
-                complete(influxDbRepo.get24hQueries(keys.toList, from))
+                complete(influxDbRepo.getDailyQueries(keys.toList, from))
               }
             )
           },
           pathPrefix("routes") {
             concat(
               path("5m") {
-                complete(influxDbRepo.get5minRoute(keys.toList, from))
+                complete(influxDbRepo.getFiveMinuesRoute(keys.toList, from))
               },
               path("24h") {
-                parameters('apiKey.*) { keys =>
-                  complete(influxDbRepo.get24hRoute(keys.toList, from))
-                }
+                complete(influxDbRepo.getDailyRoute(keys.toList, from))
               }
             )
           },
           pathPrefix("ips") {
             concat(
               path("5m") {
-                complete(influxDbRepo.get5minIp(keys.toList, from))
+                complete(influxDbRepo.getFiveMinuteIp(keys.toList, from))
               },
               path("24h") {
-                complete(influxDbRepo.get24hIp(keys.toList, from))
+                complete(influxDbRepo.getDailyIp(keys.toList, from))
               }
             )
           }

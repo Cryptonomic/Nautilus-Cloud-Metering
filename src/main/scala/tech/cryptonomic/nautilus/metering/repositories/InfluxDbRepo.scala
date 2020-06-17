@@ -27,22 +27,22 @@ object Models {
 trait InfluxDbRepo {
 
   /** Reads amount of queries grouped by 5minute intervals */
-  def get5minQueries(apiKeys: List[String], from: Option[Long]): Future[List[QueryCQ]]
+  def getFiveMinutesQueries(apiKeys: List[String], from: Option[Long]): Future[List[QueryCQ]]
 
   /** Reads amount of queries grouped by 24hour intervals */
-  def get24hQueries(apiKeys: List[String], from: Option[Long]): Future[List[QueryCQ]]
+  def getDailyQueries(apiKeys: List[String], from: Option[Long]): Future[List[QueryCQ]]
 
   /** Reads amount of hits per route grouped by 5minute intervals */
-  def get5minRoute(apiKeys: List[String], from: Option[Long]): Future[List[RouteCQ]]
+  def getFiveMinuesRoute(apiKeys: List[String], from: Option[Long]): Future[List[RouteCQ]]
 
   /** Reads amount of hits per route grouped by 24hour intervals */
-  def get24hRoute(apiKeys: List[String], from: Option[Long]): Future[List[RouteCQ]]
+  def getDailyRoute(apiKeys: List[String], from: Option[Long]): Future[List[RouteCQ]]
 
   /** Reads amount of hits per IP grouped by 5minute intervals */
-  def get5minIp(apiKeys: List[String], from: Option[Long]): Future[List[IpCQ]]
+  def getFiveMinuteIp(apiKeys: List[String], from: Option[Long]): Future[List[IpCQ]]
 
   /** Reads amount of hits per IP grouped by 24hour intervals */
-  def get24hIp(apiKeys: List[String], from: Option[Long]): Future[List[IpCQ]]
+  def getDailyIp(apiKeys: List[String], from: Option[Long]): Future[List[IpCQ]]
 }
 
 class InfluxDbRepoImpl(cfg: InfluxDbConfig)(
@@ -56,16 +56,18 @@ class InfluxDbRepoImpl(cfg: InfluxDbConfig)(
   private val client = new AkkaIOClient(cfg.host, cfg.port, Some(cred), false, None, false)
 
   // Influx uses nanoseconds, but we would want to use seconds for simplicity
-  private val timeConstraint: Option[Long] => String = _.map(from => s" and time > ${from*1000000000}").getOrElse("")
+  private val timeConstraint: Option[Long] => String = _.map(from => s"and time > ${from * 1000000000}").getOrElse("")
 
-  /** Reads amount of queries grouped by 5minute intervals */
-  override def get5minQueries(apiKeys: List[String], from: Option[Long]): Future[List[QueryCQ]] =
+  /** Reads amount of queries grouped by 5minute intervals
+    * @param apiKeys list of API keys
+    * @param from optional timestamp in seconds
+    */
+  override def getFiveMinutesQueries(apiKeys: List[String], from: Option[Long]): Future[List[QueryCQ]] =
     client
       .measurement[QueryCQ](cfg.database, "five_minute_queries_measurement")
       .read(
-        s"select time, apiKey, count from a_day.five_minute_queries_measurement where apiKey =~ /${apiKeys.mkString("|")}/" + timeConstraint(
-              from
-            )
+        s"select time, apiKey, count from a_day.five_minute_queries_measurement where apiKey =~ /${apiKeys
+          .mkString("|")}/ ${timeConstraint(from)}"
       )
       .map {
         case Left(e) =>
@@ -74,14 +76,16 @@ class InfluxDbRepoImpl(cfg: InfluxDbConfig)(
         case Right(value) => value.toList
       }
 
-  /** Reads amount of queries grouped by 24hour intervals */
-  override def get24hQueries(apiKeys: List[String], from: Option[Long]): Future[List[QueryCQ]] =
+  /** Reads amount of queries grouped by 24hour intervals
+    * @param apiKeys list of API keys
+    * @param from optional timestamp in seconds
+    */
+  override def getDailyQueries(apiKeys: List[String], from: Option[Long]): Future[List[QueryCQ]] =
     client
       .measurement[QueryCQ](cfg.database, "daily_queries_measurement")
       .read(
-        s"select time, apiKey, count from a_month.daily_queries_measurement where apiKey =~ /${apiKeys.mkString("|")}/" + timeConstraint(
-              from
-            )
+        s"select time, apiKey, count from a_month.daily_queries_measurement where apiKey =~ /${apiKeys
+          .mkString("|")}/ ${timeConstraint(from)}"
       )
       .map {
         case Left(e) =>
@@ -90,13 +94,16 @@ class InfluxDbRepoImpl(cfg: InfluxDbConfig)(
         case Right(value) => value.toList
       }
 
-  /** Reads amount of hits per route grouped by 5minute intervals */
-  override def get5minRoute(apiKeys: List[String], from: Option[Long]): Future[List[RouteCQ]] =
+  /** Reads amount of hits per route grouped by 5minute intervals
+    * @param apiKeys list of API keys
+    * @param from optional timestamp in seconds
+    */
+  override def getFiveMinuesRoute(apiKeys: List[String], from: Option[Long]): Future[List[RouteCQ]] =
     client
       .measurement[RouteCQ](cfg.database, "five_minute_top_routes_measurement")
       .read(
         s"select time, apiKey, count, uri from a_day.five_minute_top_routes_measurement where apiKey =~ /${apiKeys
-          .mkString("|")}/" + timeConstraint(from)
+          .mkString("|")}/ ${timeConstraint(from)}"
       )
       .map {
         case Left(e) =>
@@ -106,11 +113,12 @@ class InfluxDbRepoImpl(cfg: InfluxDbConfig)(
       }
 
   /** Reads amount of hits per route grouped by 24hour intervals */
-  override def get24hRoute(apiKeys: List[String], from: Option[Long]): Future[List[RouteCQ]] =
+  override def getDailyRoute(apiKeys: List[String], from: Option[Long]): Future[List[RouteCQ]] =
     client
       .measurement[RouteCQ](cfg.database, "daily_top_routes_measurement")
       .read(
-        s"select time, apiKey, count, uri from a_month.daily_top_routes_measurement where apiKey =~ /${apiKeys.mkString("|")}/" + timeConstraint
+        s"select time, apiKey, count, uri from a_month.daily_top_routes_measurement where apiKey =~ /${apiKeys
+          .mkString("|")}/ ${timeConstraint(from)}"
       )
       .map {
         case Left(e) =>
@@ -119,13 +127,16 @@ class InfluxDbRepoImpl(cfg: InfluxDbConfig)(
         case Right(value) => value.toList
       }
 
-  /** Reads amount of hits per IP grouped by 5minute intervals */
-  override def get5minIp(apiKeys: List[String], from: Option[Long]): Future[List[IpCQ]] =
+  /** Reads amount of hits per IP grouped by 5minute intervals
+    * @param apiKeys list of API keys
+    * @param from optional timestamp in seconds
+    */
+  override def getFiveMinuteIp(apiKeys: List[String], from: Option[Long]): Future[List[IpCQ]] =
     client
       .measurement[IpCQ](cfg.database, "five_minute_top_ips_measurement")
       .read(
         s"select time, apiKey, count, ip from a_day.five_minute_top_ips_measurement where apiKey =~ /${apiKeys
-          .mkString("|")}/" + timeConstraint(from)
+          .mkString("|")}/ ${timeConstraint(from)}"
       )
       .map {
         case Left(e) =>
@@ -134,14 +145,16 @@ class InfluxDbRepoImpl(cfg: InfluxDbConfig)(
         case Right(value) => value.toList
       }
 
-  /** Reads amount of hits per IP grouped by 24hour intervals */
-  override def get24hIp(apiKeys: List[String], from: Option[Long]): Future[List[IpCQ]] =
+  /** Reads amount of hits per IP grouped by 24hour intervals
+    * @param apiKeys list of API keys
+    * @param from optional timestamp in seconds
+    */
+  override def getDailyIp(apiKeys: List[String], from: Option[Long]): Future[List[IpCQ]] =
     client
       .measurement[IpCQ](cfg.database, "daily_top_ips_measurement")
       .read(
-        s"select time, apiKey, count, ip from a_month.daily_top_ips_measurement where apiKey =~ /${apiKeys.mkString("|")}/" + timeConstraint(
-              from
-            )
+        s"select time, apiKey, count, ip from a_month.daily_top_ips_measurement where apiKey =~ /${apiKeys
+          .mkString("|")}/ ${timeConstraint(from)}"
       )
       .map {
         case Left(e) =>
