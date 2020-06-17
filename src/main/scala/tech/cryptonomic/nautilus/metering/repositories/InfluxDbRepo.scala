@@ -55,7 +55,8 @@ class InfluxDbRepoImpl(cfg: InfluxDbConfig)(
   private val cred = InfluxCredentials(cfg.username, cfg.password)
   private val client = new AkkaIOClient(cfg.host, cfg.port, Some(cred), false, None, false)
 
-  private val timeConstraint: Option[Long] => String = _.map(from => s" and time > $from").getOrElse("")
+  // Influx uses nanoseconds, but we would want to use seconds for simplicity
+  private val timeConstraint: Option[Long] => String = _.map(from => s" and time > ${from*1000000000}").getOrElse("")
 
   /** Reads amount of queries grouped by 5minute intervals */
   override def get5minQueries(apiKeys: List[String], from: Option[Long]): Future[List[QueryCQ]] =
