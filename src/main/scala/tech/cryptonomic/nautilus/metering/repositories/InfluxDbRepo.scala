@@ -27,13 +27,13 @@ object Models {
 trait InfluxDbRepo {
 
   /** Reads amount of queries grouped by 5minute intervals */
-  def getFiveMinutesQueries(apiKeys: List[String], from: Option[Long]): Future[List[QueryCQ]]
+  def getFiveMinuteQueries(apiKeys: List[String], from: Option[Long]): Future[List[QueryCQ]]
 
   /** Reads amount of queries grouped by 24hour intervals */
   def getDailyQueries(apiKeys: List[String], from: Option[Long]): Future[List[QueryCQ]]
 
   /** Reads amount of hits per route grouped by 5minute intervals */
-  def getFiveMinuesRoute(apiKeys: List[String], from: Option[Long]): Future[List[RouteCQ]]
+  def getFiveMinuteRoute(apiKeys: List[String], from: Option[Long]): Future[List[RouteCQ]]
 
   /** Reads amount of hits per route grouped by 24hour intervals */
   def getDailyRoute(apiKeys: List[String], from: Option[Long]): Future[List[RouteCQ]]
@@ -62,7 +62,7 @@ class InfluxDbRepoImpl(cfg: InfluxDbConfig)(
     * @param apiKeys list of API keys
     * @param from optional timestamp in seconds
     */
-  override def getFiveMinutesQueries(apiKeys: List[String], from: Option[Long]): Future[List[QueryCQ]] =
+  override def getFiveMinuteQueries(apiKeys: List[String], from: Option[Long]): Future[List[QueryCQ]] =
     client
       .measurement[QueryCQ](cfg.database, "five_minute_queries_measurement")
       .read(
@@ -98,7 +98,7 @@ class InfluxDbRepoImpl(cfg: InfluxDbConfig)(
     * @param apiKeys list of API keys
     * @param from optional timestamp in seconds
     */
-  override def getFiveMinuesRoute(apiKeys: List[String], from: Option[Long]): Future[List[RouteCQ]] =
+  override def getFiveMinuteRoute(apiKeys: List[String], from: Option[Long]): Future[List[RouteCQ]] =
     client
       .measurement[RouteCQ](cfg.database, "five_minute_top_routes_measurement")
       .read(

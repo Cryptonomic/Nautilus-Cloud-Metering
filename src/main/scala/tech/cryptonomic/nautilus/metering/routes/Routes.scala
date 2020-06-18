@@ -21,7 +21,7 @@ class Routes(influxDbRepo: InfluxDbRepo)(implicit system: ActorSystem, materiali
           pathPrefix("queries") {
             concat(
               path("5m") {
-                complete(influxDbRepo.getFiveMinutesQueries(keys.toList, from))
+                complete(influxDbRepo.getFiveMinuteQueries(keys.toList, from))
               },
               path("24h") {
                 complete(influxDbRepo.getDailyQueries(keys.toList, from))
@@ -31,7 +31,7 @@ class Routes(influxDbRepo: InfluxDbRepo)(implicit system: ActorSystem, materiali
           pathPrefix("routes") {
             concat(
               path("5m") {
-                complete(influxDbRepo.getFiveMinuesRoute(keys.toList, from))
+                complete(influxDbRepo.getFiveMinuteRoute(keys.toList, from))
               },
               path("24h") {
                 complete(influxDbRepo.getDailyRoute(keys.toList, from))
