@@ -18,10 +18,10 @@ object Models {
   case class RouteCQ(
       @epoch @timestamp time: String,
       @field count: Int,
-      @field uri: String,
+      @field uri: Option[String],
       @field apiKey: Option[String]
   )
-  case class IpCQ(@epoch @timestamp time: String, @field count: Int, @field ip: String, @field apiKey: Option[String])
+  case class IpCQ(@epoch @timestamp time: String, @field count: Int, @field ip: Option[String], @field apiKey: Option[String])
 }
 
 trait InfluxDbRepo {
