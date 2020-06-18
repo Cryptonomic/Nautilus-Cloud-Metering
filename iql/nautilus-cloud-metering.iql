@@ -1,9 +1,9 @@
 USE ncmetering
 CREATE RETENTION POLICY "a_day" ON "ncmetering" DURATION 24h REPLICATION 1
 CREATE RETENTION POLICY "a_month" ON "ncmetering" DURATION 30d REPLICATION 1
-CREATE CONTINUOUS QUERY "cq_five_minute_queries" ON "ncmetering" BEGIN   SELECT count(countable)   INTO "a_day"."five_minute_queries_measurement"   FROM decisions   GROUP BY apiKey, time(5m) END
-CREATE CONTINUOUS QUERY "cq_daily_queries" ON "ncmetering" BEGIN   SELECT count(countable)   INTO "a_month"."daily_queries_measurement"   FROM decisions   GROUP BY apiKey, time(24h) END
-CREATE CONTINUOUS QUERY "cq_five_minute_top_routes" ON "ncmetering" BEGIN   SELECT count(countable)   INTO "a_day"."five_minute_top_routes_measurement"   FROM decisions   GROUP BY apiKey, uri, time(5m) END
-CREATE CONTINUOUS QUERY "cq_daily_top_routes" ON "ncmetering" BEGIN  SELECT count(countable)  INTO "a_month"."daily_top_routes_measurement"  FROM decisions  GROUP BY apiKey, uri, time(24h) END
-CREATE CONTINUOUS QUERY "cq_five_minute_top_ips" ON "ncmetering" BEGIN  SELECT count(countable)  INTO "a_day"."five_minute_top_ips_measurement"  FROM decisions  GROUP BY apiKey, ip, time(5m) END
-CREATE CONTINUOUS QUERY "cq_daily_top_ips" ON "ncmetering" BEGIN  SELECT count(countable)   INTO "a_month"."daily_top_ips_measurement"   FROM decisions   GROUP BY apiKey, ip, time(24h) END
+CREATE CONTINUOUS QUERY "cq_five_minute_queries" ON "ncmetering" BEGIN   SELECT count(countable)   INTO "a_day"."five_minute_queries_measurement"   FROM decisions WHERE apiKey =~ /./ GROUP BY apiKey, time(5m) END
+CREATE CONTINUOUS QUERY "cq_daily_queries" ON "ncmetering" BEGIN   SELECT count(countable)   INTO "a_month"."daily_queries_measurement"   FROM decisions WHERE apiKey =~ /./  GROUP BY apiKey, time(24h) END
+CREATE CONTINUOUS QUERY "cq_five_minute_top_routes" ON "ncmetering" BEGIN   SELECT count(countable)   INTO "a_day"."five_minute_top_routes_measurement"   FROM decisions WHERE apiKey =~ /./  GROUP BY apiKey, uri, time(5m) END
+CREATE CONTINUOUS QUERY "cq_daily_top_routes" ON "ncmetering" BEGIN  SELECT count(countable)  INTO "a_month"."daily_top_routes_measurement"  FROM decisions WHERE apiKey =~ /./ GROUP BY apiKey, uri, time(24h) END
+CREATE CONTINUOUS QUERY "cq_five_minute_top_ips" ON "ncmetering" BEGIN  SELECT count(countable)  INTO "a_day"."five_minute_top_ips_measurement"  FROM decisions WHERE apiKey =~ /./ GROUP BY apiKey, ip, time(5m) END
+CREATE CONTINUOUS QUERY "cq_daily_top_ips" ON "ncmetering" BEGIN  SELECT count(countable)   INTO "a_month"."daily_top_ips_measurement"   FROM decisions WHERE apiKey =~ /./  GROUP BY apiKey, ip, time(24h) END
