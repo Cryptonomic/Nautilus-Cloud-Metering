@@ -52,6 +52,7 @@ object DecisionRecordStream {
         InfluxDbWriteMessage(p.build())
           .withDatabaseName(cfg.database)
       }
+      .async
       .groupedWithin(cfg.maxBatchSize, cfg.maxBatchWait)
       .to(InfluxDbSink.create())
       .named("DecisionRecordStream")

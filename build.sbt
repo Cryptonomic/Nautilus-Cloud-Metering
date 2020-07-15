@@ -1,7 +1,7 @@
 name := "Nautilus-Cloud-Metering"
 version := "0.1"
 
-scalaVersion := "2.12.10"
+scalaVersion := "2.12.11"
 
 val akkaHttpVersion = "10.1.8"
 val circeVersion = "0.11.0"

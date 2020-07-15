@@ -1,4 +1,4 @@
-version: "3.3"
+version: "3.8"
 services:
   influx:
     image: influxdb:1.7.9
@@ -9,6 +9,9 @@ services:
       INFLUXDB_ADMIN_PASSWORD: "supersecretpassword"
       INFLUXDB_USER: "agent"
       INFLUXDB_USER_PASSWORD: "smith"
+      INFLUXDB_REPORTING_DISABLED: "true"
+    logging:
+      driver: none
     ports:
       - 8086:8086
     volumes:
@@ -16,30 +19,38 @@ services:
       - ./iql/nautilus-cloud-metering.iql:/docker-entrypoint-initdb.d/01-initdb.iql
     networks:
       - ncm-net
-  agent:
-    image: ncm-agent:latest
+
+  proxy-agent:
+    image: ncm-proxy-agent
     depends_on:
       - influx
-    volumes:
-      - socket:/tmp
     networks:
       - ncm-net
-    command: java -cp metering-agent-0.1.jar tech.cryptonomic.nautilus.metering.MeteringAgent
-  nginx:
-    image: ncm-nginx:latest
-    depends_on:
-      - agent
+    build:
+      context: ./
+      target: ncm-proxy-agent
     ports:
       - 9090:9090
     volumes:
-      - socket:/tmp
-      - ./docker/loadtest/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/nginx.conf:/etc/nginx/nginx.conf:ro
+    ulimits:
+      nproc: 65535
+      nofile: 165535
+
+  metering-api:
+    image: ncm-metering-api
+    depends_on:
+      - influx
     networks:
       - ncm-net
+    ports:
+      - 8080:8080
+    build:
+      context: ./
+      target: ncm-metering-api
 
 networks:
   ncm-net:
 
 volumes:
   dbdata:
-  socket:
