@@ -41,9 +41,9 @@ object IpcFlow extends LazyLogging {
       recordQueue: Option[SourceQueueWithComplete[Response]]
   ) = {
     var ipcFlow = Flow[ByteString]
+      .takeWithin(cfg.ipcTimeout)
       .via(new IpcProtocolFlow)
       .map(authProvider.authorize)
-      //.takeWithin(cfg.ipcTimeout)
       .recover {
         case x: ProtocolException =>
           logger.error("Protocol exception occurred, Denying request", x)
