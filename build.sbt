@@ -1,7 +1,7 @@
 name := "Nautilus-Cloud-Metering"
 version := "0.1"
 
-scalaVersion := "2.12.11"
+scalaVersion := "2.12.12"
 
 val akkaHttpVersion = "10.1.8"
 val circeVersion = "0.11.0"
@@ -9,6 +9,7 @@ val alpakkaVersion = "1.1.2"
 val chroniclerVersion = "0.6.4"
 
 libraryDependencies ++= Seq(
+  "io.netty"                     %  "netty-all"                              % "4.1.51.Final",
   "com.lightbend.akka"           %% "akka-stream-alpakka-unix-domain-socket" % alpakkaVersion,
   "com.lightbend.akka"           %% "akka-stream-alpakka-influxdb"           % alpakkaVersion,
   "com.github.fsanaulla"         %% "chronicler-core-shared"                 % chroniclerVersion,
