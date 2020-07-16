@@ -9,8 +9,8 @@ else
   exit 1
 fi
 
-java -Xms512m -Xmx1024m -XX:+UseG1GC -XX:InitiatingHeapOccupancyPercent=65 -XX:G1HeapRegionSize=4 \
-     -XX:MaxGCPauseMillis=250 -cp /app/* tech.cryptonomic.nautilus.metering.MeteringAgent  &
+java -Xms512m -Xmx1024m -XX:+UseG1GC -XX:InitiatingHeapOccupancyPercent=65 -XX:G1HeapRegionSize=2 \
+     -XX:MaxGCPauseMillis=400 -cp /app/* tech.cryptonomic.nautilus.metering.MeteringAgent  &
 
 PID=$!
 RESULT=$?

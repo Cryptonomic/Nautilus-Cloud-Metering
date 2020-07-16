@@ -8,11 +8,9 @@ import scala.concurrent.duration._
   * @param socketPath The IPC socket path
   * @param ipcTimeout The protocol timeout. This controls how long the agent should wait for data before giving up.
   * @param ipcBacklog The size of the connection backlog
-  * @param threads The number of threads for the executor
   */
 final case class MeteringAgentConfig(
     socketPath: String,
     ipcTimeout: FiniteDuration,
-    ipcBacklog: Int,
-    threads: Int
+    ipcBacklog: Int
 )
