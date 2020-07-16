@@ -9,7 +9,6 @@ val alpakkaVersion = "1.1.2"
 val chroniclerVersion = "0.6.4"
 
 libraryDependencies ++= Seq(
-  "io.netty"                     %  "netty-all"                              % "4.1.51.Final",
   "com.lightbend.akka"           %% "akka-stream-alpakka-unix-domain-socket" % alpakkaVersion,
   "com.lightbend.akka"           %% "akka-stream-alpakka-influxdb"           % alpakkaVersion,
   "com.github.fsanaulla"         %% "chronicler-core-shared"                 % chroniclerVersion,
