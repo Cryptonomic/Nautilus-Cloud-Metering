@@ -1,6 +1,0 @@
-FROM nautilus-cloud-metering:base-latest
-
-ADD . /build
-WORKDIR /build
-RUN /build/make.sh
-

@@ -21,7 +21,7 @@ object MeteringApi extends App with LazyLogging {
   val apiConfig = ConfigSource.default.at(namespace = "nautilus.metering.api").load[MeteringApiConfig].toOption.get
 
   val repo = new InfluxDbRepoImpl(dbConfig)
-  val routes = new Routes(repo).route
+  val routes = new Routes(repo, apiConfig).route
 
   Http().bindAndHandle(routes, apiConfig.host, apiConfig.port) andThen {
       case Success(binding) => logger.info("Server successfully started at {}", binding.localAddress)

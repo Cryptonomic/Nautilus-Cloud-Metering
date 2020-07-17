@@ -49,6 +49,7 @@ class IpcProtocolTest extends TestKit(ActorSystem("IpcTest")) with FlatSpecLike 
                           |  "ip" : "127.0.0.1",
                           |  "userAgent" : "UnitTest",
                           |  "servername" : "test",
+                          |  "method" : "GET",
                           |  "headers": [
                           | { "name": "apiKey", "value": "$apikey" }
                           | ]
@@ -60,6 +61,7 @@ class IpcProtocolTest extends TestKit(ActorSystem("IpcTest")) with FlatSpecLike 
                                      |  "ip" : "127.0.0.1",
                                      |  "userAgent" : "UnitTest",
                                      |  "servername" : "test",
+                                     |  "method" : "GET",
                                      |  "headers": [
                                      | 
                                      | ]
@@ -69,6 +71,7 @@ class IpcProtocolTest extends TestKit(ActorSystem("IpcTest")) with FlatSpecLike 
                                  |  "uri": "/chains/block/head",
                                  |  "ip" : "127.0.0.1",
                                  |  "userAgent" : "UnitTest",
+                                 |  "method" : "GET"
                                  |
                                  |""".stripMargin
 

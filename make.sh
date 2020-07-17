@@ -8,13 +8,14 @@ NGINX_BUILD_DIR="$BUILD_DIR/nginx-$NGINX_VERSION"
 
 function clean {
     echo "Cleaning ..."
-    rm -rf "$BUILD_DIR"
-    mkdir -p "$BUILD_DIR"
+    rm -rf "$BUILD_DIR" || true
 }
 
 function setup {
     echo "Setting up ..."
+    mkdir -p "$BUILD_DIR"
     tar xzf "nginx-$NGINX_VERSION.tar.gz" -C "$BUILD_DIR"
+    sbt update
 }
 
 function download {
