@@ -1,5 +1,0 @@
-ngx_module_type=HTTP
-ngx_addon_name=metered_access
-ngx_module_name=metered_access_module
-ngx_module_srcs="$ngx_addon_dir/metered_access_module.c"
-. auto/module
