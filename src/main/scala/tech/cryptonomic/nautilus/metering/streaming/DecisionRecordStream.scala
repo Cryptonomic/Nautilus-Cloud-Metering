@@ -41,7 +41,7 @@ object DecisionRecordStream {
         p.tag("servername", x.request.headers.getOrElse("x-server-name", "not specified"))
         p.tag("ip", x.request.headers.getOrElse("x-forwarded-for", "not specified"))
         p.tag("method", x.request.method)
-
+        p.tag("apiKey", x.request.headers.getOrElse("apikey", "not specified"))
         p.tag("exception", x.ex.getOrElse(""))
         p.time(System.currentTimeMillis(), TimeUnit.MILLISECONDS)
         InfluxDbWriteMessage(p.build())
