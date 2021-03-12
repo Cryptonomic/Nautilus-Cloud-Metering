@@ -11,7 +11,7 @@ import tech.cryptonomic.nautilus.metering.repositories.InfluxDbRepo
 import scala.concurrent.ExecutionContext
 import scala.util.Success
 
-class Routes(influxDbRepo: InfluxDbRepo, apiConfig: MeteringApiConfig)(implicit system: ActorSystem, materializer: Materializer, ec: ExecutionContext)
+class ApiRoutes(influxDbRepo: InfluxDbRepo, apiConfig: MeteringApiConfig)(implicit system: ActorSystem, materializer: Materializer, ec: ExecutionContext)
     extends ErrorAccumulatingCirceSupport
     with LazyLogging {
   import io.circe.generic.auto._

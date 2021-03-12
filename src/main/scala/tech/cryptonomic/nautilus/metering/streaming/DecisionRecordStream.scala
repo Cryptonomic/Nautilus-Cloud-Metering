@@ -8,14 +8,10 @@ import akka.stream.alpakka.influxdb.scaladsl.InfluxDbSink
 import akka.stream.scaladsl.{RunnableGraph, Source, SourceQueueWithComplete}
 import org.influxdb.{InfluxDB, InfluxDBFactory}
 import org.influxdb.dto.Point
-import tech.cryptonomic.nautilus.metering.auth.Response
+import tech.cryptonomic.nautilus.metering.auth.AuthDecision
 import tech.cryptonomic.nautilus.metering.config.InfluxDbConfig
 
-import scala.collection.JavaConverters._
-import scala.concurrent.duration._
-
-/**
-  *  The akka stream that takes each response and pushes to a event / metrics database, in this case InfluxDb.
+/**  The akka stream that takes each response and pushes to a event / metrics database, in this case InfluxDb.
   */
 object DecisionRecordStream {
 
@@ -25,28 +21,27 @@ object DecisionRecordStream {
   private def connect(cfg: InfluxDbConfig): InfluxDB =
     InfluxDBFactory.connect(makeUri(cfg), cfg.username, cfg.password)
 
-  /**
-    *  Creates a runnable graph that accepts `Response` objects at its source and writes them out to InfluxDb
+  /**  Creates a runnable graph that accepts `Response` objects at its source and writes them out to InfluxDb
     *  at the end.
     *
     * @param cfg  A InfluxDb configuration
     * @return The runnable graph
     */
-  def apply(cfg: InfluxDbConfig): RunnableGraph[SourceQueueWithComplete[Response]] = {
+  def apply(cfg: InfluxDbConfig): RunnableGraph[SourceQueueWithComplete[AuthDecision]] = {
     implicit val influxDb: InfluxDB = connect(cfg)
     Source
-      .queue[Response](10240, OverflowStrategy.backpressure)
+      .queue[AuthDecision](10240, OverflowStrategy.backpressure)
       .map { x =>
         val p = Point.measurement(cfg.measurementName)
+
         p.addField("countable", 1)
-        x.request.foreach { r =>
-          p.tag("decision", x.action.toString)
-          p.tag(r.headers.map(kv => (kv.name, kv.value)).toMap.asJava)
-          p.tag("uri", r.uri)
-          p.tag("useragent", r.userAgent)
-          p.tag("servername", r.servername)
-          p.tag("ip", r.ip)
-        }
+        p.tag("decision", x.action.toString)
+        p.tag("uri", x.request.uri)
+        p.tag("useragent", x.request.headers.getOrElse("user-agent", "not specified"))
+        p.tag("servername", x.request.headers.getOrElse("x-server-name", "not specified"))
+        p.tag("ip", x.request.headers.getOrElse("x-forwarded-for", "not specified"))
+        p.tag("method", x.request.method)
+        p.tag("apiKey", x.request.headers.getOrElse("apikey", "not specified"))
         p.tag("exception", x.ex.getOrElse(""))
         p.time(System.currentTimeMillis(), TimeUnit.MILLISECONDS)
         InfluxDbWriteMessage(p.build())

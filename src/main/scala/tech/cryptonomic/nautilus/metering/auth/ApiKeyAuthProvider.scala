@@ -11,14 +11,12 @@ import akka.stream.ActorMaterializer
 import com.typesafe.scalalogging.LazyLogging
 import de.heikoseeberger.akkahttpcirce.ErrorAccumulatingCirceSupport
 import tech.cryptonomic.nautilus.metering.config.NautilusCloudConfig
-import tech.cryptonomic.nautilus.metering.streaming
 
 import scala.collection.JavaConverters._
 import scala.concurrent.ExecutionContextExecutor
 import scala.util.{Failure, Success}
 
-/**
-  * An authorization provider which uses API Keys to allow / deny access to resources.
+/** An authorization provider which uses API Keys to allow / deny access to resources.
   *
   * @param cfg  The nautilus cloud configuration
   * @param system An external actor system
@@ -62,29 +60,28 @@ class ApiKeyAuthProvider(cfg: NautilusCloudConfig)(implicit val system: ActorSys
     }
   )
 
-  /**
-    * Handy method to shutdown the timer
+  /** Handy method to shutdown the timer
     */
   def shutdown(): Unit =
     if (!cancellable.isCancelled) cancellable.cancel()
 
-  override def authorize(request: streaming.HttpRequest): Response =
+  override def authorize(request: AuthRequest): AuthDecision =
     if (request.method.toLowerCase.contentEquals("options")) {
       logger.debug("OPTIONS request, skipping auth")
-      Response(Action.ALLOW, Some(request), None)
+      AuthDecision(Action.ALLOW, None, request)
     } else {
-      request.headers.find(_.name.contains("apiKey")).map(_.value) match {
-        case Some(apiKey) =>
+      request.headers.find(_._1.toLowerCase.contains("apikey")) match {
+        case Some((_, apiKey)) =>
           logger.debug(
             s"Client Key : $apiKey - NC Keys: ${keySet.asScala.mkString(",")} - " +
-                s"Static Keys: ${cfg.staticKeys.mkString(",")}"
+              s"Static Keys: ${cfg.staticKeys.mkString(",")}"
           )
           if (keySet.contains(apiKey) || cfg.staticKeys.contains(apiKey))
-            Response(Action.ALLOW, Some(request), None)
+            AuthDecision(Action.ALLOW, None, request)
           else
-            Response(Action.DENY, Some(request), Some("Invalid Key"))
+            AuthDecision(Action.DENY, Some("Invalid Key"), request)
         case None =>
-          Response(Action.DENY, Some(request), Some("ApiKey header missing"))
+          AuthDecision(Action.DENY, Some("ApiKey header missing"), request)
       }
     }
 }

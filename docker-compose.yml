@@ -10,8 +10,6 @@ services:
       INFLUXDB_USER: "agent"
       INFLUXDB_USER_PASSWORD: "smith"
       INFLUXDB_REPORTING_DISABLED: "true"
-    logging:
-      driver: none
     ports:
       - 8086:8086
     volumes:
@@ -20,15 +18,13 @@ services:
     networks:
       - ncm-net
 
-  proxy-agent:
-    image: ncm-proxy-agent
+  nginx:
+    image: nginx:latest
     depends_on:
       - influx
+      - metering-agent
     networks:
       - ncm-net
-    build:
-      context: ./
-      target: ncm-proxy-agent
     ports:
       - 9090:9090
     volumes:
@@ -36,6 +32,18 @@ services:
     ulimits:
       nproc: 65535
       nofile: 165535
+
+  metering-agent:
+    image: ncm-agent-api
+    depends_on:
+      - influx
+    networks:
+      - ncm-net
+    ports:
+      - 3050:3050
+    build:
+      context: ./
+      target: ncm-agent-api
 
   metering-api:
     image: ncm-metering-api
