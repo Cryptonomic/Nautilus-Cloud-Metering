@@ -25,4 +25,6 @@ fi
 
 JAVA_OPTS="$JAVA_OPTS -XX:+UseG1GC -cp /app/* $1"
 
+echo "JAVA Options: $JAVA_OPTS"
+
 java $JAVA_OPTS
