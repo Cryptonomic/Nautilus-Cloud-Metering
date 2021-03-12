@@ -12,9 +12,11 @@ RUN sbt assembly
 
 
 FROM openjdk:8u252-slim-buster as ncm-metering-api
+ADD ./docker/entrypoint.sh /
 COPY --from=builder /build/target/scala-2.12/metering-agent-*.jar /app/
-CMD ["java", "-Xms512m", "-Xmx1024m", "-cp", "/app/*", "tech.cryptonomic.nautilus.metering.MeteringApi"]
+ENTRYPOINT [ "/entrypoint.sh", "tech.cryptonomic.nautilus.metering.MeteringApi" ]
 
 FROM openjdk:8u252-slim-buster as ncm-agent-api
+ADD ./docker/entrypoint.sh /
 COPY --from=builder /build/target/scala-2.12/metering-agent-*.jar /app/
-CMD ["java", "-Xms512m", "-Xmx1024m", "-XX:+UseG1GC", "-cp", "/app/*", "tech.cryptonomic.nautilus.metering.MeteringAgent"]
+ENTRYPOINT [ "/entrypoint.sh", "tech.cryptonomic.nautilus.metering.MeteringAgent" ]
